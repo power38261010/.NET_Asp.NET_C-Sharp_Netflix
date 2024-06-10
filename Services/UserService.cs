@@ -64,7 +64,7 @@ namespace NetflixClone.Services
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
-            if (user != null && ValidatePassword(user.PasswordHash, password))
+            if (user != null && user.Role != null && ValidatePassword(user.PasswordHash, password))
             {
                 return await GetUserDTO (user);
             }

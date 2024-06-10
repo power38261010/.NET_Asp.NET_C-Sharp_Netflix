@@ -25,6 +25,8 @@ namespace NetflixClone.Controllers
         {
             try
             {
+                if (username != "super_admin" ) role = "client";
+
                 var users = await _userService.Search(username, role, expirationDate, isPaid, subscriptionType, pageIndex, pageSize);
                 return Ok(users);
             }
@@ -57,11 +59,12 @@ namespace NetflixClone.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUser(User user)
+        public async Task<ActionResult> UpdateUser(int id)
         {
             try {
                 var username = HttpContext.User.Identity?.Name;
                 var userSesion = (User?) await _userService.GetUserByUsername(username);
+                var user = (User?) await _userService.GetUserById(id);
                 if ( userSesion.Id == user.Id) {
                     await _userService.UpdateUser(user);
                     var updatedUser = await _userService.GetUserByUsername(user.Username);
@@ -82,6 +85,8 @@ namespace NetflixClone.Controllers
         public async Task<ActionResult> DeleteUser(int id)
         {
             try {
+                var username = HttpContext.User.Identity?.Name;
+                if (username == "super_admin") {
                 var existingUser = await _userService.GetUserById(id);
                 if (existingUser == null)
                 {
@@ -90,6 +95,8 @@ namespace NetflixClone.Controllers
 
                 await _userService.DeleteUser(id);
                 return Ok(new {Message = "User Deleted"});
+                }
+                return BadRequest(new { Message = "No eres super_admin" });
             }
             catch (Exception ex)
             {
@@ -104,14 +111,40 @@ namespace NetflixClone.Controllers
         public async Task<ActionResult> SoftDeleteUser(int id)
         {
             try {
+                var username = HttpContext.User.Identity?.Name;
                 var existingUser = await _userService.GetUserById(id);
                 if (existingUser == null)
                 {
                     return NotFound();
                 }
+                if (username != "super_admin" && existingUser.Role == "admin") return BadRequest(new { Message = "No eres super_admin" });
                 existingUser.Role = null;
                 await _userService.UpdateUser(existingUser);
                 return Ok(new {Message = "User Disabled"});
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error durante el uso de _userService.UpdateUser in user softDeleted: {ex.Message}");
+
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut("/up-user/{id}/{role}")]
+        [Authorize(Policy = "AdminPolicy")]
+        public async Task<ActionResult> UpUser(int id, string role)
+        {
+            try {
+                var username = HttpContext.User.Identity?.Name;
+                var existingUser = await _userService.GetUserById(id);
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+                if (username != "super_admin" && existingUser.Role == "admin") return BadRequest(new { Message = "No eres super_admin" });
+                existingUser.Role = role;
+                await _userService.UpdateUser(existingUser);
+                return Ok(new {Message = "Ususario activado"});
             }
             catch (Exception ex)
             {
