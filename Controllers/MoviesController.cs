@@ -99,7 +99,7 @@ namespace NetflixClone.Controllers
         {
             try
             {
-                var success = await _movieService.CreateMovie(request);
+                var success = await _movieService.CreateMovie(request.Title, request.Description, request.Genre, request.ReleaseDate, request.PosterUrl, request.TrailerUrl, (float?)request.Rating, (ICollection<MovieSubscription>?)request.MovieSubscriptionRequest );
                 if (success)
                 {
                     return CreatedAtAction(nameof(GetMovieById), new { id = request.Id }, request);
@@ -122,7 +122,7 @@ namespace NetflixClone.Controllers
                     return BadRequest();
                 }
 
-                var success = await _movieService.UpdateMovie(request);
+                var success = await _movieService.UpdateMovie( id, request.Title, request.Description, request.Genre, request.ReleaseDate, request.PosterUrl, request.TrailerUrl, (float?) request.Rating, (ICollection<MovieSubscription>?)request.MovieSubscriptionRequest );
                 if (success)
                 {
                     var updatedMovie = await _movieService.GetMovieById(id);

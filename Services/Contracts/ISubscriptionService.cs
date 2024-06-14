@@ -7,7 +7,8 @@ using NetflixClone.Models;
 
 namespace NetflixClone.Services.Contracts
 {
-    public interface ISubscriptionService  : IBaseService <Subscription>
+    public interface ISubscriptionService : IBaseService<Subscription, SubscriptionRequest>
     {
     }
 }
+

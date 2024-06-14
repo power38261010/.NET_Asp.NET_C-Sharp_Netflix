@@ -33,6 +33,7 @@ namespace NetflixClone
                 // Desactiva la preservación de referencias para evitar $id y $values
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.JsonSerializerOptions.WriteIndented = true;
+                // MercadoPagoConfigs.Initialize(Configuration);
             });
 
             services.AddMemoryCache();
@@ -61,6 +62,9 @@ namespace NetflixClone
 
             // Configuración de autenticación
             services.AddAuthentication();
+
+            //MP
+            // MercadoPagoConfigs.Initialize(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

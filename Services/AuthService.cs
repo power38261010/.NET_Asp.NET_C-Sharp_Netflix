@@ -23,8 +23,7 @@ namespace NetflixClone.Services
             _context = context;
         }
 
-        public string GenerateJwtToken(UserDto? user)
-        {
+        public string GenerateJwtToken( string Username, string Role) {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]);
 
@@ -32,8 +31,8 @@ namespace NetflixClone.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Role, user?.Role),
+                    new Claim(ClaimTypes.Name, Username),
+                    new Claim(ClaimTypes.Role, Role),
                 }),
                 Expires = DateTime.UtcNow.AddDays(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),

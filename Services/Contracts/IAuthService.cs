@@ -7,7 +7,7 @@ namespace NetflixClone.Services.Contracts
 {
     public interface IAuthService
     {
-        string GenerateJwtToken(UserDto? user);
+        string GenerateJwtToken ( string Username, string Role);
         bool ValidateJWTToken(string token);
         Task Logout(string token);
         void CacheToken(string token);

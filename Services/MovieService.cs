@@ -42,27 +42,28 @@ namespace NetflixClone.Services
             }
         }
 
-    public async Task<bool> CreateMovie(MovieRequest request)
+    public async Task<bool> CreateMovie(string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription)
     {
         try
         {
+
             var movie = new Movie
             {
-                Title = request.Title,
-                Description = request.Description,
-                Genre = request.Genre,
-                ReleaseDate = request.ReleaseDate ?? DateTime.Now,
-                PosterUrl = request.PosterUrl,
-                TrailerUrl = request.TrailerUrl,
-                Rating = (float?)(request.Rating ?? 0)
+                Title = Title,
+                Description = Description,
+                Genre = Genre,
+                ReleaseDate = ReleaseDate ?? DateTime.Now,
+                PosterUrl = PosterUrl,
+                TrailerUrl = TrailerUrl,
+                Rating = (float?)(Rating ?? 0)
             };
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            if (request.MovieSubscriptionRequest != null)
+            if (MovieSubscription != null)
             {
-                foreach (var subscription in request.MovieSubscriptionRequest)
+                foreach (var subscription in MovieSubscription)
                 {
                     _context.MovieSubscription.Add(new MovieSubscription
                     {
@@ -81,29 +82,29 @@ namespace NetflixClone.Services
         }
     }
 
-        public async Task<bool> UpdateMovie(MovieRequest request)
+        public async Task<bool> UpdateMovie(int Id, string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription)
         {
             var movie = await _context.Movies.Include(m => m.MovieSubscription)
-                                             .FirstOrDefaultAsync(m => m.Id == request.Id);
+                                            .FirstOrDefaultAsync(m => m.Id == Id);
             if (movie == null)
             {
                 return false;
             }
 
             // Actualizar las propiedades de la película
-            movie.Title = request.Title ?? movie.Title;
-            movie.Description = request.Description ?? movie.Description;
-            movie.Genre = request.Genre ?? movie.Genre;
-            movie.ReleaseDate = request.ReleaseDate ?? movie.ReleaseDate;
-            movie.PosterUrl = request.PosterUrl ?? movie.PosterUrl;
-            movie.TrailerUrl = request.TrailerUrl ?? movie.TrailerUrl;
-            movie.Rating = (float?)(request.Rating ?? movie.Rating);
+            movie.Title = Title ?? movie.Title;
+            movie.Description = Description ?? movie.Description;
+            movie.Genre = Genre ?? movie.Genre;
+            movie.ReleaseDate = ReleaseDate ?? movie.ReleaseDate;
+            movie.PosterUrl = PosterUrl ?? movie.PosterUrl;
+            movie.TrailerUrl = TrailerUrl ?? movie.TrailerUrl;
+            movie.Rating = (float?)(Rating ?? movie.Rating);
 
             // Actualizar las relaciones de suscripción
-            if (request.MovieSubscriptionRequest != null)
+            if (MovieSubscription != null)
             {
                 var currentSubscriptions = movie.MovieSubscription.Select(ms => ms.SubscriptionId).ToList();
-                var newSubscriptions = request.MovieSubscriptionRequest.Select(ms => ms.SubscriptionId).ToList();
+                var newSubscriptions = MovieSubscription.Select(ms => ms.SubscriptionId).ToList();
 
                 // Eliminar suscripciones que ya no están en la lista
                 foreach (var subscriptionId in currentSubscriptions.Except(newSubscriptions))

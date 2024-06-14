@@ -23,3 +23,5 @@ namespace NetflixClone.Models
         public ICollection<MovieSubscription>? MovieSubscription { get; set; }
     }
 }
+
+

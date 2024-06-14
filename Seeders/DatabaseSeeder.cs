@@ -47,8 +47,8 @@ namespace NetflixClone.Seeders
             // Seed payments
             var payments = new List<Pay>
             {
-                new Pay { Currency = "USD", MonthlyPayment = 9.99f, SubscriptionId = savedSubscriptions.First(s => s.Type == "Started").Id },
-                new Pay { Currency = "USD", MonthlyPayment = 19.99f, SubscriptionId = savedSubscriptions.First(s => s.Type == "Premium").Id }
+                new Pay { Currency = "USD", MonthlyPayment = (decimal)9.99m, SubscriptionId = savedSubscriptions.First(s => s.Type == "Started").Id },
+                new Pay { Currency = "USD", MonthlyPayment = (decimal)19.99m, SubscriptionId = savedSubscriptions.First(s => s.Type == "Premium").Id }
             };
 
             foreach (var pay in payments)

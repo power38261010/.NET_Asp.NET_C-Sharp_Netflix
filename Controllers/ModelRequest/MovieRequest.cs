@@ -14,8 +14,3 @@ public class MovieRequest {
     public ICollection<MovieSubscriptionRequest>? MovieSubscriptionRequest { get; set; } = new List<MovieSubscriptionRequest>();
 }
 
-public class MovieSubscriptionRequest {
-    public int Id { get; set; }
-    public int MovieId { get; set; }
-    public int SubscriptionId { get; set; } 
-}

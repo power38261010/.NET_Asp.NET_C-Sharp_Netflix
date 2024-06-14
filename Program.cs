@@ -11,23 +11,24 @@ using NetflixClone.Seeders;
 using NetflixClone.Services;
 using NetflixClone.Services.Contracts;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar Hangfire
-// builder.Services.AddHangfire(configuration => configuration
-//     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-//     .UseSimpleAssemblyNameTypeSerializer()
-//     .UseRecommendedSerializerSettings()
-//     .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
-//     {
-//         CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-//         SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-//         QueuePollInterval = TimeSpan.Zero,
-//         UseRecommendedIsolationLevel = true,
-//         DisableGlobalLocks = true
-//     }));
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+    {
+        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+        QueuePollInterval = TimeSpan.Zero,
+        UseRecommendedIsolationLevel = true,
+        DisableGlobalLocks = true
+    }));
 
-// builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer();
 
 // Agregando Logger
 builder.Logging.AddConsole();
@@ -55,8 +56,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", builder =>
     {
         builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+                .AllowAnyMethod()
+                .AllowAnyHeader();
     });
 });
 
@@ -98,13 +99,13 @@ if (!app.Environment.IsDevelopment()) {
 }
 
 // Uso de Hangfire
-// app.UseHangfireDashboard();
+app.UseHangfireDashboard();
 
 // Configuro el job recurrente HangFire
-// RecurringJob.AddOrUpdate<CheckUserExpirationsCron>(
-//     "CheckUserExpirations",
-//     service => service.CheckUserExpirations(),
-//     "0 0 */2 * *"); // Cron expression for every two days at midnight
+RecurringJob.AddOrUpdate<CheckUserExpirationsCron>(
+    "CheckUserExpirations",
+    service => service.CheckUserExpirations(),
+    "0 0 */2 * *"); // Cron expression for every two days at midnight
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -127,8 +128,7 @@ app.MapControllerRoute(
 app.MapControllers().RequireAuthorization();
 
 // Ejecutar Seeder
-using (var scope = app.Services.CreateScope())
-{
+using (var scope = app.Services.CreateScope()) {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
     await DatabaseSeeder.Seed(context);

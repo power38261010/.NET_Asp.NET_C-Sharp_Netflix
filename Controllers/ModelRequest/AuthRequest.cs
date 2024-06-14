@@ -2,12 +2,8 @@ using NetflixClone.Models;
 
 namespace NetflixClone.Controllers.ModelRequest;
 
-public class UserRequest
+public class AuthRequest
 {
-    public int Id { get; set; }
     public string Username { get; set; }
     public string PasswordHash { get; set; }
-    public string Email { get; set; }
-    public int? SubscriptionId { get; set; }
-
 }

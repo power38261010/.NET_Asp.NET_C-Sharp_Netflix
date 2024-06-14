@@ -5,14 +5,15 @@ using X.PagedList;
 
 namespace NetflixClone.Services.Contracts
 {
-    public interface IUserService /* : IBaseService <User>**/
+    public interface IUserService /* : IBaseService <User, UserDto>**/
     {
-        Task<UserDto?> Register(User user);
-        Task<UserDto?> Authenticate(string username, string password);
+        Task<UserDto?> Register(string Username, string PasswordHash, string Email, int SubscriptionId );
+        Task<UserDto?> Authenticate(string Username, string PasswordHash);
         Task<User?> GetUserById(int id);
         Task<UserDto?> GetUserDTO(User user);
         Task<User?> GetUserByUsername (string username);
-        Task UpdateUser(User user);
+        Task UpdateUser(int Id, string Username, string PasswordHash, string Email);
+        Task UpdateRoleUser(int Id, string Role);
         Task  DeleteUser(int id);
         Task<IPagedList<UserDto>> Search( string username , string role ,  DateTime? expirationDate , bool? isPaid ,  string subscriptionType ,   int pageIndex ,  int pageSize );
     }

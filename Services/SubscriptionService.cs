@@ -11,46 +11,51 @@ namespace NetflixClone.Services
     {
         private readonly ApplicationDbContext _context;
 
-        public SubscriptionService(ApplicationDbContext context)
-        {
+        public SubscriptionService(ApplicationDbContext context) {
             _context = context;
         }
 
-        public async Task<List<Subscription>?> GetAll()
-        {
+        public async Task<IEnumerable<Subscription>?> GetAll() {
             return await _context.Subscriptions.ToListAsync();
         }
 
-        public async Task<Subscription?> GetById(int id)
-        {
+        public async Task<Subscription?> GetById(int id) {
             return await _context.Subscriptions.FindAsync(id);
         }
 
-        public async Task Create(Subscription subscription)
-        {
-            _context.Subscriptions.Add(subscription);
+        public async Task Create(SubscriptionRequest subscription) {
+            var sub = new Subscription {Type = subscription.Type};
+            _context.Subscriptions.Add(sub);
             await _context.SaveChangesAsync();
+
+            if (subscription.MovieSubscriptionRequest != null) {
+                foreach (var movie in subscription.MovieSubscriptionRequest) {
+                    _context.MovieSubscription.Add(new MovieSubscription {
+                        MovieId = movie.MovieId,
+                        SubscriptionId = sub.Id
+                    });
+                }
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public async Task Edit(Subscription subscription)
-        {
-            _context.Entry(subscription).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+        public async Task Edit(SubscriptionRequest subscription) {
+            var sub = await _context.Subscriptions.Include(sub => sub.MovieSubscription)
+                                .FirstOrDefaultAsync(s => s.Id == subscription.Id);
+            if (sub != null) {
+                sub.Type = subscription.Type ?? sub.Type;
+                _context.Entry(sub).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public async Task Delete(int id)
-        {
+        public async Task Delete(int id) {
             var subscription = await _context.Subscriptions.FindAsync(id);
-            if (subscription != null)
-            {
+            if (subscription != null) {
                 _context.Subscriptions.Remove(subscription);
                 await _context.SaveChangesAsync();
             }
         }
 
-        internal object GetById(int? subscriptionId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

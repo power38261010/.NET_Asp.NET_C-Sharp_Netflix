@@ -31,19 +31,15 @@ namespace NetflixClone.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AuthRequest credentials)
         {
-            try
-            {
+            try {
                 var user = await _userService.Authenticate(credentials.Username, credentials.PasswordHash);
-                if (user == null)
-                {
+                if (user == null || user.Role == null ) {
                     return BadRequest(new { Message = "User not found" });
                 }
 
-                var token = _authService.GenerateJwtToken(user);
+                var token = _authService.GenerateJwtToken(user.Username, user.Role);
                 return Ok(new { Token = token, Profile = user });
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError($"Error durante el inicio de sesión: {ex.Message}");
                 return BadRequest(new { Message = ex.Message });
             }
@@ -51,17 +47,15 @@ namespace NetflixClone.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] User user)
+        public async Task<IActionResult> Register([FromBody] UserRequest user)
         {
 
-            try
-            {
-                var registeredUser = await _userService.Register(user);
-                var token = _authService.GenerateJwtToken(registeredUser);
+            try {
+                var SubscriptionId = user.SubscriptionId ?? 0;
+                var registeredUser = await _userService.Register(user.Username, user.PasswordHash, user.Email, SubscriptionId);
+                var token = _authService.GenerateJwtToken(registeredUser.Username, registeredUser.Role);
                 return Ok(new { Token = token, Profile = registeredUser});
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError($"Error durante el registro: {ex.Message}");
                 return BadRequest(new { ex.Message });
             }

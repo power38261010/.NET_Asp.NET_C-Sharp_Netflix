@@ -331,6 +331,7 @@
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Hangfire.NetCore.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Hangfire.SqlServer.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Humanizer.dll
+/home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/MercadoPago.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Microsoft.Bcl.AsyncInterfaces.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Microsoft.CodeAnalysis.dll
@@ -356,6 +357,7 @@
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Microsoft.Win32.SystemEvents.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Mono.TextTemplating.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/Newtonsoft.Json.dll
+/home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/RestSharp.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/System.CodeDom.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/System.Composition.AttributedModel.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/System.Composition.Convention.dll

@@ -9,7 +9,9 @@ namespace NetflixClone.Models
         [Key]
         public int Id { get; set; }
         public string Currency { get; set; }
-        public float MonthlyPayment { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal MonthlyPayment { get; set; }
 
         [ForeignKey("SubscriptionId")]
         public int? SubscriptionId { get; set; }

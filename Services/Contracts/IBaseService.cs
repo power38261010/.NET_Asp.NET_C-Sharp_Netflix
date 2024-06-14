@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace BussinessLayer.Services.Contracts
 {
-    public interface IBaseService<T> where T : class
+    public interface IBaseService<T, K> where T : class
     {
-        Task<List<T>?> GetAll();
-        Task Create(T EntityToCreate);
+        Task<IEnumerable<T>?> GetAll();
+        Task Create(K EntityToCreate);
         Task Delete(int id);
-        Task Edit(T EntityToEdit);
+        Task Edit(K EntityToEdit);
         Task<T?> GetById(int id);
     }
 }
