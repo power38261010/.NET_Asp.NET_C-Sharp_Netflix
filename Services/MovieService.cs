@@ -157,7 +157,7 @@ namespace NetflixClone.Services
         int pageSize = 10)
 
     {
-        var query = _context.Movies.Include(m => m.MovieSubscription).AsQueryable();
+        var query = _context.Movies.Include(m => m.MovieSubscription ).AsQueryable();
 
         // Apply filters based on provided parameters
         if (!string.IsNullOrEmpty(title))
@@ -213,8 +213,8 @@ namespace NetflixClone.Services
             MovieSubscriptions = movie.MovieSubscription?.Select(ms => new MovieSubscriptionDto
             {
                 Id = ms.Id,
-                MovieId = ms.MovieId,
-                SubscriptionId = ms.SubscriptionId
+                SubscriptionId = ms.SubscriptionId,
+                Subscription = ms.Subscription
             }).ToList()
         }).ToList();
 

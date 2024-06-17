@@ -49,7 +49,7 @@ namespace NetflixClone.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<IActionResult> CreatePay([FromBody] PayRequest pay) {
             try {
                 await _payService.Create(pay);
@@ -60,11 +60,9 @@ namespace NetflixClone.Controllers
             }
         }
 
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "SuperAdminPolicy")]
         [HttpGet("pay-subscriptions")]
         public async Task<IActionResult> GetAllPaySubscription () {
-            var username = HttpContext.User.Identity?.Name;
-            if (username != "super_admin") return NotFound();
             try {
                 var paySubscriptions = await _payService.GetAllPaySubscription();
                 if (paySubscriptions == null) {
@@ -77,7 +75,7 @@ namespace NetflixClone.Controllers
             }
         }
         [HttpPut("{id}")]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<IActionResult> UpdatePay(int id, [FromBody]  PayRequest pay)  {
             try {
                 if (id != pay.Id) {
@@ -94,8 +92,8 @@ namespace NetflixClone.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "AdminPolicy")]
-        public async Task<IActionResult> DeleteSubscription(int id) {
+        [Authorize(Policy = "SuperAdminPolicy")]
+        public async Task<IActionResult> DeletePay(int id) {
             try {
                 await _payService.Delete(id);
                 return Ok(new {Message = "Pay Deleted"});

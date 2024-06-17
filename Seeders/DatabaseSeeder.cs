@@ -63,7 +63,7 @@ namespace NetflixClone.Seeders
             // Seed users
             var users = new List<User>
             {
-                new User { Username = "super_admin", PasswordHash = HashPassword("admin1234"), Role = "admin" },
+                new User { Username = "super_admin", PasswordHash = HashPassword("admin1234"), Role = "super_admin" },
                 new User { Username = "soy_admin", PasswordHash = HashPassword("admin1234"), Role = "admin" },
                 new User { Username = "fran_duti", PasswordHash = HashPassword("password123"), Role = "client", SubscriptionId = 1 },
                 new User { Username = "Fer_nando", PasswordHash = HashPassword("password123"), Role = "client", SubscriptionId = 1 },

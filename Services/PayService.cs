@@ -57,10 +57,31 @@ namespace NetflixClone.Services {
             if ( response.Status == "approved") {
                 var pay = await GetById(PayId);
                 var user = await _context.Users.FindAsync(UserId);
+
+                int diffDays = 0;
+                var today = DateTime.UtcNow;
+                var expDate = user.ExpirationDate;
+
+                if ((bool)user.IsPaid) {
+                    var diffTime = expDate - today;
+                    diffDays = diffTime.Value.Days;
+
+                    if (user.SubscriptionId != pay.SubscriptionId) {
+                        if (pay.SubscriptionId == 2) {
+                            diffDays /= 2;
+                        } else if (pay.SubscriptionId == 1) {
+                            diffDays *= 2;
+                        }
+                    }
+                }
+
                 user.SubscriptionId = pay.SubscriptionId;
                 user.IsPaid = true;
-                user.ExpirationDate = DateTime.UtcNow.AddMonths(1);
-                if (IsAnual) user.ExpirationDate = DateTime.UtcNow.AddMonths(12);
+                var newExpirationDate = today.AddDays(diffDays).AddMonths(1);
+                if (IsAnual) {
+                    newExpirationDate = newExpirationDate.AddMonths(11); // Añadir 11 meses más si es anual
+                }
+                user.ExpirationDate = newExpirationDate;
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
             }
@@ -118,13 +139,16 @@ namespace NetflixClone.Services {
         }
         public async Task<IEnumerable<PayDto>> TypesPayToArg() {
             var payments = await _context.Payments
+                                            .Include(p => p.Subscription)
                                             .Where(u => u.Currency == "ARS")
                                             .ToListAsync();
 
             var payDtos = payments.Select(pay => new PayDto {
+                Id= pay.Id,
                 Currency = pay.Currency,
                 MonthlyPayment = pay.MonthlyPayment,
                 SubscriptionId = pay.SubscriptionId,
+                Subscription = pay.Subscription,
                 AnnualMultiplierPayment = CalculateAnnualPayment(pay.MonthlyPayment),
                 InterestMonthlyPayment = CalculateInterestRatePayment(pay.MonthlyPayment)
             });

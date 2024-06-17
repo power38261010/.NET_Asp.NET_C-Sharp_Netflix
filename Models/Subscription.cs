@@ -9,7 +9,8 @@ namespace NetflixClone.Models
         public int Id { get; set; }
         public string? Type { get; set; } // maybe"standard" or "premium"
 
-        public ICollection<MovieSubscription> MovieSubscription { get; set; }
+        public ICollection<MovieSubscription?> MovieSubscription { get; set; }
+
     }
 }
 

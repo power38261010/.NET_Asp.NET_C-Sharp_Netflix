@@ -13,7 +13,7 @@ namespace NetflixClone.Services.Contracts
         Task<UserDto?> GetUserDTO(User user);
         Task<User?> GetUserByUsername (string username);
         Task UpdateUser(int Id, string Username, string PasswordHash, string Email);
-        Task UpdateRoleUser(int Id, string Role);
+        Task UpdateRoleUser(int Id, string? Role);
         Task  DeleteUser(int id);
         Task<IPagedList<UserDto>> Search( string username , string role ,  DateTime? expirationDate , bool? isPaid ,  string subscriptionType ,   int pageIndex ,  int pageSize );
     }

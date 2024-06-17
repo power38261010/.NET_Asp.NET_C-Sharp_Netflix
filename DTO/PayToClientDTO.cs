@@ -1,5 +1,7 @@
 
 
+using NetflixClone.Models;
+
 namespace NetflixClone.DTO;
 public class PayDto
 {
@@ -10,6 +12,7 @@ public class PayDto
         public decimal InterestMonthlyPayment { get; set; }
 
         public int? SubscriptionId { get; set; }
+        public Subscription? Subscription { get; set; }
 }
 
 

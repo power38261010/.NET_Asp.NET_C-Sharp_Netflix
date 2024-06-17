@@ -81,9 +81,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Agregando autorizaciones de ["admin"]
+// Agregando autorizaciones de ["admin","super-admin"]
 builder.Services.AddAuthorization(options => {
-    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin"));
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin","super_admin"));
+    options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("super_admin"));
 });
 
 // Lanzamiento

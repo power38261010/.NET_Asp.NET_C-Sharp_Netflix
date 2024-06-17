@@ -79,6 +79,7 @@ namespace NetflixClone.Services
             return new UserDto {
                 Id = user.Id,
                 Username = user.Username,
+                Email = user.Email,
                 Role = user.Role,
                 ExpirationDate = user.ExpirationDate,
                 IsPaid = user.IsPaid,
@@ -86,17 +87,17 @@ namespace NetflixClone.Services
             };
         }
 
-        public async Task UpdateUser(int Id, string Username, string PasswordHash, string Email) {
+        public async Task UpdateUser(int Id, string Username, string? PasswordHashNew, string Email) {
 
             var user = await GetUserById (Id);
-            user.PasswordHash = PasswordHash ?? GenerateHash(PasswordHash);
+            if (PasswordHashNew != "")  user.PasswordHash = GenerateHash(PasswordHashNew);
             if (Username != null && Username != "") user.Username = Username;
-            user.Email = Email ?? Email;
+            if (Email != null && Email != "") user.Email = Email;
 
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
-        public async Task UpdateRoleUser(int Id, string Role) {
+        public async Task UpdateRoleUser(int Id, string? Role) {
             var user = await GetUserById (Id);
             string?[] includeRole = { "client", "admin", null};
             if (includeRole.Contains(Role) &&  user != null) {
@@ -124,7 +125,9 @@ namespace NetflixClone.Services
             int pageIndex = 1,
             int pageSize = 10) {
 
-            var query = _context.Users.AsQueryable();
+            var query = _context.Users
+            .Include(u => u.Subscription)
+            .AsQueryable();
 
             if (!string.IsNullOrEmpty(username)) {
                 query = query.Where(u => u.Username.Contains(username));
@@ -154,7 +157,8 @@ namespace NetflixClone.Services
                 Role = u.Role,
                 ExpirationDate = u.ExpirationDate,
                 IsPaid = u.IsPaid,
-                SubscriptionId =  (int) u.SubscriptionId
+                SubscriptionId =  (int) u.SubscriptionId,
+                Subscription=  new SubscriptionDTO(u.Subscription)
             }).ToPagedListAsync(pageIndex, pageSize);
 
             return users;

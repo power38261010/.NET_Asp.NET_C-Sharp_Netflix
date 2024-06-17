@@ -43,7 +43,7 @@ namespace NetflixClone.Controllers {
         }
 
         [HttpPost]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<ActionResult> CreateSubscription([FromBody] SubscriptionRequest subscription) {
             try {
                 await _subscriptionService.Create(subscription);
@@ -55,7 +55,7 @@ namespace NetflixClone.Controllers {
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<IActionResult> UpdateSubscription(int id, [FromBody] SubscriptionRequest subscription) {
             try {
                 if (id != subscription.Id) {
@@ -73,7 +73,7 @@ namespace NetflixClone.Controllers {
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<IActionResult> DeleteSubscription(int id) {
             try {
                 await _subscriptionService.Delete(id);
