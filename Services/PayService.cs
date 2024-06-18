@@ -62,7 +62,7 @@ namespace NetflixClone.Services {
                 var today = DateTime.UtcNow;
                 var expDate = user.ExpirationDate;
 
-                if ((bool)user.IsPaid) {
+                if (user.IsPaid != null && (bool)user.IsPaid) {
                     var diffTime = expDate - today;
                     diffDays = diffTime.Value.Days;
 
