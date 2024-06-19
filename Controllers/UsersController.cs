@@ -37,7 +37,6 @@ namespace NetflixClone.Controllers {
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "AdminPolicy")]
         public async Task<ActionResult> GetUserById(int id) {
             try {
                 var username = HttpContext.User.Identity?.Name;
@@ -64,9 +63,8 @@ namespace NetflixClone.Controllers {
                 var username = HttpContext.User.Identity?.Name;
                 var userSesion = (User?) await _userService.GetUserByUsername(username);
                 var userUpdate = (User?) await _userService.GetUserById(id);
-
                 var validateUser = await _userService.Authenticate(username, user.PasswordHash);
-                if ( user.PasswordHash != "" && validateUser == null) return BadRequest(new { Message = "No coincide la contraseña a modificar" });
+                if ( userSesion == null || userUpdate == null || (user.PasswordHash != "" && validateUser == null)) return BadRequest(new { Message = "No coincide la contraseña a modificar" });
                 if ( userSesion.Id == userUpdate.Id ) {
                     var Username = user.Username ?? null;
                     var PasswordHashNew = "";
