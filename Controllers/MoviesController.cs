@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using NetflixClone.Controllers.ModelRequest;
+using System.Collections.ObjectModel;
+using X.PagedList;
 
 namespace NetflixClone.Controllers
 {
@@ -48,21 +50,23 @@ namespace NetflixClone.Controllers
             string operation = "==",
             DateTime? releaseDate = null,
             int? subscriptionType = null,
-            string orderByProperty = "Title",
+            string orderByProperty = "Rating",
             int pageIndex = 1,
-            int pageSize = 10)
+            int pageSize = 20)
         {
             try
             {
 
                 var username = HttpContext.User.Identity?.Name;
                 var userSesion = (User?) await _userService.GetUserByUsername(username);
-
+                IPagedList<MovieDto>? movies = null;
                 if ( userSesion != null) {
-                    if ( userSesion.Role != "admin") {
+                    if ( userSesion.Role == "client") {
                         subscriptionType = userSesion.SubscriptionId;
+                        movies = await _movieService.Search(title, description, genre, operation, releaseDate, subscriptionType, orderByProperty, pageIndex, 120);
+                    } else {
+                        movies = await _movieService.Search(title, description, genre, operation, releaseDate, subscriptionType, orderByProperty, pageIndex, pageSize);
                     }
-                    var movies = await _movieService.Search(title, description, genre, operation, releaseDate, subscriptionType, orderByProperty, pageIndex, pageSize);
                     return Ok(movies);
                 }
                 return BadRequest(new { Message = "Usuario no autenticado" });
@@ -159,26 +163,25 @@ namespace NetflixClone.Controllers
         }
 
         [HttpPut("rating/{id}/{isLike}")]
-        public async Task<IActionResult> RatingMovie(int id, bool isLike)
-        {
-            var success = false;
+        public async Task<IActionResult> RatingMovie(int id, bool isLike) {
             try {
-                if (isLike) {
-                success = await _movieService.LikeMovie( id);
-                } else if (!isLike) {
-                success = await _movieService.DislikeMovie( id);
+                bool success;
+                if (isLike || isLike) {
+                    success = await _movieService.LikeMovie(id);
+                } else {
+                    success = await _movieService.DislikeMovie(id);
                 }
-                if (success)
-                {
-                    return Ok(new {Message = "Movie Rated"});
+
+                if (success) {
+                    return Ok(new { Message = "Movie Rated" });
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error rating movie");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error durante el uso de RatingMovie: {ex.Message}");
+
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Error rating movie" });
+            } catch (Exception ex) {
+                _logger.LogError($"Error during RatingMovie: {ex.Message}");
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
     }
 }
