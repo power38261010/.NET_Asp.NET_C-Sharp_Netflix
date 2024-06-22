@@ -104,7 +104,17 @@ namespace NetflixClone.Controllers
         {
             try
             {
-                var success = await _movieService.CreateMovie(request.Title, request.Description, request.Genre, request.ReleaseDate, request.PosterUrl, request.TrailerUrl, (float?)request.Rating, (ICollection<MovieSubscription>?)request.MovieSubscriptionRequest );
+                ICollection<MovieSubscription>? movieSubscriptions = null  ;
+                if (request.MovieSubscriptions != null) {
+                movieSubscriptions = request.MovieSubscriptions?.Select(ms => new MovieSubscription {
+                    MovieId = ms.MovieId,
+                    SubscriptionId = ms.SubscriptionId
+                }).ToList();
+
+                _logger.LogWarning($"movieSubscriptions warning: {movieSubscriptions}");
+                }
+
+                var success = await _movieService.CreateMovie(request.Title, request.Description, request.Genre, request.ReleaseDate, request.PosterUrl, request.TrailerUrl, (float?)request.Rating,movieSubscriptions);
                 if (success)
                 {
                     return CreatedAtAction(nameof(GetMovieById), new { id = request.Id }, request);
@@ -117,6 +127,7 @@ namespace NetflixClone.Controllers
             }
         }
 
+
         [HttpPut("{id}")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<IActionResult> UpdateMovie(int id, [FromBody] MovieRequest request)
@@ -126,8 +137,18 @@ namespace NetflixClone.Controllers
                 {
                     return BadRequest();
                 }
+                ICollection<MovieSubscription>? movieSubscriptions = null  ;
+                if (request.MovieSubscriptions != null) {
+                movieSubscriptions = request.MovieSubscriptions?.Select(ms => new MovieSubscription {
+                    MovieId = ms.MovieId,
+                    SubscriptionId = ms.SubscriptionId
+                }).ToList();
 
-                var success = await _movieService.UpdateMovie( id, request.Title, request.Description, request.Genre, request.ReleaseDate, request.PosterUrl, request.TrailerUrl, (float?) request.Rating, (ICollection<MovieSubscription>?)request.MovieSubscriptionRequest );
+                _logger.LogWarning($"movieSubscriptions warning: {movieSubscriptions}");
+                }
+
+                var success = await _movieService.UpdateMovie(id, request.Title, request.Description, request.Genre, request.ReleaseDate, request.PosterUrl, request.TrailerUrl, (float?)request.Rating, movieSubscriptions);
+
                 if (success)
                 {
                     var updatedMovie = await _movieService.GetMovieById(id);
@@ -141,6 +162,7 @@ namespace NetflixClone.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "AdminPolicy")]

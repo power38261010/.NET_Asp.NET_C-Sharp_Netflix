@@ -19,7 +19,7 @@ namespace NetflixClone.Data {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<MovieSubscription>()
-                .HasKey(ms => new { ms.MovieId, ms.SubscriptionId });
+                .HasKey(ms => ms.Id);
 
             modelBuilder.Entity<MovieSubscription>()
                 .HasOne(ms => ms.Movie)

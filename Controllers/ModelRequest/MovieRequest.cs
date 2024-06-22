@@ -11,6 +11,6 @@ public class MovieRequest {
     public string? TrailerUrl { get; set; }
     public double? Rating { get; set; }
 
-    public ICollection<MovieSubscriptionRequest>? MovieSubscriptionRequest { get; set; } = new List<MovieSubscriptionRequest>();
+    public ICollection<MovieSubscriptionRequest>? MovieSubscriptions { get; set; }
 }
 

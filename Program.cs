@@ -129,11 +129,11 @@ app.MapControllerRoute(
 app.MapControllers().RequireAuthorization();
 
 // Ejecutar Seeder
-using (var scope = app.Services.CreateScope()) {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
-    await DatabaseSeeder.Seed(context);
-}
+// using (var scope = app.Services.CreateScope()) {
+//     var services = scope.ServiceProvider;
+//     var context = services.GetRequiredService<ApplicationDbContext>();
+//     await DatabaseSeeder.Seed(context);
+// }
 
 // Ejecutando
 app.Run();
