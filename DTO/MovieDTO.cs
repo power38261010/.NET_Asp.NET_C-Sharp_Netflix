@@ -1,5 +1,5 @@
 using NetflixClone.Models;
-
+namespace NetflixClone.DTO;
 public class MovieDto
 {
     public int Id { get; set; }

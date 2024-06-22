@@ -8,47 +8,37 @@ using X.PagedList;
 using System.Linq.Dynamic.Core;
 using NetflixClone.Controllers.ModelRequest;
 
-namespace NetflixClone.Services
-{
-    public class MovieService : IMovieService
-    {
+namespace NetflixClone.Services {
+    public class MovieService : IMovieService {
         private readonly ApplicationDbContext _context;
 
-        public MovieService(ApplicationDbContext context)
-        {
+        public MovieService(ApplicationDbContext context) {
             _context = context;
         }
 
-        public async Task<IEnumerable<Movie>> GetAllMovies()
-        {
+        public async Task<IEnumerable<Movie>> GetAllMovies() {
             return await _context.Movies
                                     .Include(m => m.MovieSubscription)
                                     .ToListAsync();
         }
 
-        public async Task<Movie?> GetMovieById(int id)
-        {
-            try{
+        public async Task<Movie?> GetMovieById(int id) {
+            try {
                 // return await _context.Movies
                 // .FindAsync(id);
 
                 return await _context.Movies
                             .Include(m => m.MovieSubscription)
                             .FirstOrDefaultAsync(m => m.Id == id);
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 throw;
             }
         }
 
-    public async Task<bool> CreateMovie(string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription)
-    {
-        try
-        {
+    public async Task<bool> CreateMovie(string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription) {
+        try {
 
-            var movie = new Movie
-            {
+            var movie = new Movie {
                 Title = Title,
                 Description = Description,
                 Genre = Genre,
@@ -61,12 +51,9 @@ namespace NetflixClone.Services
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            if (MovieSubscription != null)
-            {
-                foreach (var subscription in MovieSubscription)
-                {
-                    _context.MovieSubscription.Add(new MovieSubscription
-                    {
+            if (MovieSubscription != null) {
+                foreach (var subscription in MovieSubscription) {
+                    _context.MovieSubscription.Add(new MovieSubscription {
                         MovieId = movie.Id,
                         SubscriptionId = subscription.SubscriptionId
                     });
@@ -75,9 +62,7 @@ namespace NetflixClone.Services
             }
 
             return true;
-        }
-        catch
-        {
+        } catch {
             return false;
         }
     }
@@ -145,88 +130,91 @@ namespace NetflixClone.Services
         }
 
 
-    public async Task<IPagedList<MovieDto>> Search(
-        string? title = null,
-        string? description = null,
-        string? genre = null,
-        string operation = "==",
-        DateTime? releaseDate = null,
-        int? subscriptionType = null,
-        string orderByProperty = "Title",
-        int pageNumber = 1,
-        int pageSize = 10)
+        public async Task<IPagedList<MovieDto>> Search(
+            string? title = null,
+            string? description = null,
+            string? genre = null,
+            string operation = "==",
+            DateTime? releaseDate = null,
+            int? subscriptionType = 0,
+            string orderByProperty = "Title",
+            int pageNumber = 1,
+            int pageSize = 10)
 
-    {
-        var query = _context.Movies.Include(m => m.MovieSubscription ).AsQueryable();
-
-        // Apply filters based on provided parameters
-        if (!string.IsNullOrEmpty(title))
         {
-            query = query.Where(m => m.Title.Contains(title));
-        }
+            var query = _context.Movies.Include(m => m.MovieSubscription ).AsQueryable();
 
-        if (!string.IsNullOrEmpty(description))
-        {
-            query = query.Where(m => m.Description.Contains(description));
-        }
-
-        if (!string.IsNullOrEmpty(genre))
-        {
-            query = query.Where(m => m.Genre.Contains(genre));
-        }
-
-        if (releaseDate.HasValue)
-        {
-            switch (operation)
-            {
-                case ">=":
-                    query = query.Where(m => m.ReleaseDate >= releaseDate);
-                    break;
-                case "<=":
-                    query = query.Where(m => m.ReleaseDate <= releaseDate);
-                    break;
-                case "==":
-                    query = query.Where(m => m.ReleaseDate == releaseDate);
-                    break;
-                case "!=":
-                    query = query.Where(m => m.ReleaseDate != releaseDate);
-                    break;
+            if (subscriptionType != 0) {
+                query = query.Where(m => m.MovieSubscription.Any(ms => ms.SubscriptionId == subscriptionType));
             }
+
+            // Apply filters based on provided parameters
+            if (!string.IsNullOrEmpty(title)) {
+                query = query.Where(m => m.Title.Contains(title));
+            }
+
+            if (!string.IsNullOrEmpty(description)) {
+                query = query.Where(m => m.Description.Contains(description));
+            }
+
+            if (!string.IsNullOrEmpty(genre)) {
+                query = query.Where(m => m.Genre.Contains(genre));
+            }
+
+            if (releaseDate.HasValue) {
+                switch (operation) {
+                    case ">=":
+                        query = query.Where(m => m.ReleaseDate >= releaseDate);
+                        break;
+                    case "<=":
+                        query = query.Where(m => m.ReleaseDate <= releaseDate);
+                        break;
+                    case "==":
+                        query = query.Where(m => m.ReleaseDate == releaseDate);
+                        break;
+                    case "!=":
+                        query = query.Where(m => m.ReleaseDate != releaseDate);
+                        break;
+                }
+            }
+
+            // Sort by Title by default
+            query = query.OrderBy(orderByProperty);
+
+            // Return paginated results
+            var movies = await query.ToPagedListAsync(pageNumber, pageSize);
+
+            var movieDtos = movies.Select(movie => new MovieDto {
+                Id = movie.Id,
+                Title = movie.Title,
+                Description = movie.Description,
+                Genre = movie.Genre,
+                ReleaseDate = movie.ReleaseDate,
+                PosterUrl = movie.PosterUrl,
+                TrailerUrl = movie.TrailerUrl,
+                Rating = movie.Rating,
+                MovieSubscriptions = movie.MovieSubscription?.Select(ms => new MovieSubscriptionDto {
+                    Id = ms.Id,
+                    SubscriptionId = ms.SubscriptionId,
+                    Subscription = ms.Subscription
+                }).ToList()
+            }).ToList();
+
+                // var result = new PagedResults<MovieDto> {
+                //                 Items = movieDtos,
+                //                 PageNumber = pageNumber,
+                //                 PageSize = pageSize,
+                //                 TotalItems = movies.TotalItemCount,
+                //                 TotalPages = movies.PageCount
+                //             };
+
+            return new StaticPagedList<MovieDto>(movieDtos, pageNumber, pageSize, movies.TotalItemCount);
         }
 
-        // Sort by Title by default
-        query = query.OrderBy(orderByProperty);
 
-        // Return paginated results
-        var movies = await query.ToPagedListAsync(pageNumber, pageSize);
-
-        var movieDtos = movies.Select(movie => new MovieDto
-        {
-            Id = movie.Id,
-            Title = movie.Title,
-            Description = movie.Description,
-            Genre = movie.Genre,
-            ReleaseDate = movie.ReleaseDate,
-            PosterUrl = movie.PosterUrl,
-            TrailerUrl = movie.TrailerUrl,
-            Rating = movie.Rating,
-            MovieSubscriptions = movie.MovieSubscription?.Select(ms => new MovieSubscriptionDto
-            {
-                Id = ms.Id,
-                SubscriptionId = ms.SubscriptionId,
-                Subscription = ms.Subscription
-            }).ToList()
-        }).ToList();
-
-        return new StaticPagedList<MovieDto>(movieDtos, pageNumber, pageSize, movies.TotalItemCount);
-}
-
-
-        public async Task<bool> LikeMovie(int id)
-        {
+        public async Task<bool> LikeMovie(int id) {
             var movie = await _context.Movies.FindAsync(id);
-            if (movie != null)
-            {
+            if (movie != null) {
                 movie.Rating += 0.01f;
                 _context.Entry(movie).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
@@ -238,8 +226,7 @@ namespace NetflixClone.Services
         public async Task<bool> DislikeMovie(int id)
         {
             var movie = await _context.Movies.FindAsync(id);
-            if (movie != null)
-            {
+            if (movie != null) {
                 movie.Rating -= 0.01f;
                 _context.Entry(movie).State = EntityState.Modified;
                 await _context.SaveChangesAsync();

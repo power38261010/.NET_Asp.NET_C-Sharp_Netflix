@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using NetflixClone.Controllers.ModelRequest;
 using System.Collections.ObjectModel;
 using X.PagedList;
+using NetflixClone.DTO;
 
 namespace NetflixClone.Controllers
 {
@@ -49,7 +50,7 @@ namespace NetflixClone.Controllers
             string? genre = null,
             string operation = "==",
             DateTime? releaseDate = null,
-            int? subscriptionType = null,
+            int? subscriptionType = 0,
             string orderByProperty = "Rating",
             int pageIndex = 1,
             int pageSize = 20)
@@ -62,7 +63,7 @@ namespace NetflixClone.Controllers
                 IPagedList<MovieDto>? movies = null;
                 if ( userSesion != null) {
                     if ( userSesion.Role == "client") {
-                        subscriptionType = userSesion.SubscriptionId;
+                        subscriptionType = userSesion.SubscriptionId ?? 0;
                         movies = await _movieService.Search(title, description, genre, operation, releaseDate, subscriptionType, orderByProperty, pageIndex, 120);
                     } else {
                         movies = await _movieService.Search(title, description, genre, operation, releaseDate, subscriptionType, orderByProperty, pageIndex, pageSize);

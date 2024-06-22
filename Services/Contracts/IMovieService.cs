@@ -1,4 +1,5 @@
 using NetflixClone.Controllers.ModelRequest;
+using NetflixClone.DTO;
 using NetflixClone.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
