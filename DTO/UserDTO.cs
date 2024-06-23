@@ -15,16 +15,17 @@ namespace NetflixClone.DTO
     }
 
     public class SubscriptionDTO
+{
+    public int Id { get; set; }
+    public string? Type { get; set; }
+
+    public SubscriptionDTO() { }
+
+    public SubscriptionDTO(Subscription? subscription)
     {
-        public int Id { get; set; }
-        public string? Type { get; set; }
-
-        public SubscriptionDTO() { }
-
-        public SubscriptionDTO(Subscription subscription)
-        {
-            Id = subscription.Id;
-            Type = subscription.Type;
-        }
+        Id = subscription?.Id ?? 0;
+        Type = subscription?.Type;
     }
+}
+
 }

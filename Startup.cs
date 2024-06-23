@@ -45,7 +45,8 @@ namespace NetflixClone
             services.AddScoped<IPayService, PayService>();
 
             services.AddAuthorization(options => {
-                options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin"));
+                options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin","super_admin"));
+                options.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("super_admin"));
             });
 
             // Configuración de CORS

@@ -9,6 +9,7 @@ using X.PagedList;
 using System.Linq;
 using NetflixClone.DTO;
 using NetflixClone.Services;
+using System.Linq.Dynamic.Core;
 
 namespace NetflixClone.Services
 {
@@ -20,7 +21,7 @@ namespace NetflixClone.Services
         }
 
         private static string GenerateHash(string password) {
-            // Reemplazar con BCrypt o Argon2 para un hashing seguro
+            // cambiar a BCrypt o Argon2 para un hashing seguro :D
             using var sha256 = SHA256.Create();
             var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
             return Convert.ToBase64String(hashBytes);
@@ -117,20 +118,20 @@ namespace NetflixClone.Services
         }
 
         public async Task<IPagedList<UserDto>> Search(
-            string? username = null,
+            string? searchTerm = null,
             string? role = null,
             DateTime? expirationDate = null,
             bool? isPaid = null,
             string? subscriptionType = null,
             int pageIndex = 1,
-            int pageSize = 10) {
+            int pageSize = 20) {
 
             var query = _context.Users
             .Include(u => u.Subscription)
             .AsQueryable();
 
-            if (!string.IsNullOrEmpty(username)) {
-                query = query.Where(u => u.Username.Contains(username));
+            if (!string.IsNullOrEmpty(searchTerm)) {
+                query = query.Where(u => u.Username.Contains(searchTerm) || u.Email.Contains(searchTerm));
             }
 
             if (!string.IsNullOrEmpty(role)) {
@@ -154,6 +155,7 @@ namespace NetflixClone.Services
             var users = await query.Select(u => new UserDto {
                 Id = u.Id,
                 Username = u.Username,
+                Email = u.Email,
                 Role = u.Role,
                 ExpirationDate = u.ExpirationDate,
                 IsPaid = u.IsPaid,

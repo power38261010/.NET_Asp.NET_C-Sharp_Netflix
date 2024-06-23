@@ -15,19 +15,19 @@ namespace NetflixClone.Controllers {
         [HttpGet("search")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<ActionResult>  SearchUsers(
-            string? username = null,
+            string? searchTerm = null,
             string? role = null,
             DateTime? expirationDate = null,
             bool? isPaid = null,
             string? subscriptionType = null,
             int pageIndex = 1,
-            int pageSize = 10) {
+            int pageSize = 20) {
             try {
                 var usernameSesion = HttpContext.User.Identity?.Name;
                 var userSesion = await _userService.GetUserByUsername(usernameSesion);
                 if (userSesion.Role != "super_admin" ) role = "client";
 
-                var users = await _userService.Search(username, role, expirationDate, isPaid, subscriptionType, pageIndex, pageSize);
+                var users = await _userService.Search(searchTerm, role, expirationDate, isPaid, subscriptionType, pageIndex, pageSize);
                 return Ok(users);
             } catch (Exception ex) {
                 _logger.LogError($"Error durante el uso de _userService.Search: {ex.Message}");
@@ -101,26 +101,30 @@ namespace NetflixClone.Controllers {
             }
         }
 
-        [HttpDelete("/softdelete/{id}")]
+        [HttpPut("softdelete/{id}")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<ActionResult> SoftDeleteUser(int id) {
-            try {
-                var queryProtected = await ProtectedAction (id);
-                if (queryProtected != null) return queryProtected;
-                await _userService.UpdateRoleUser(id,null);
-                return Ok(new {Message = "User Disabled"});
-            } catch (Exception ex) {
-                _logger.LogError($"Error durante el uso de _userService.UpdateUser in user softDeleted: {ex.Message}");
+        try {
 
-                return BadRequest(new { Message = ex.Message });
-            }
+            var queryProtected = await ProtectedAction(id);
+            _logger.LogWarning($"Error during _userService.UpdateUser in user softDeleted: {queryProtected}");
+            if (queryProtected != null) return queryProtected;
+            await _userService.UpdateRoleUser(id, null);
+            return Ok(new { Message = "User Disabled" });
+        } catch (Exception ex) {
+            _logger.LogError($"Error during _userService.UpdateUser in user softDeleted: {ex.Message}");
+            return BadRequest(new { Message = ex.Message });
+        }
         }
 
-        [HttpPut("/up-user/{id}/{role}")]
+
+        [HttpPut("up-user/{id}/{role}")]
         [Authorize(Policy = "AdminPolicy")]
         public async Task<ActionResult> UpUser(int id, string role) {
             try {
                 var queryProtected = await ProtectedAction (id);
+            _logger.LogWarning($"Error during _userService.UpdateUser in user softDeleted: {queryProtected}");
+
                 if (queryProtected != null) return queryProtected;
                 await _userService.UpdateRoleUser(id,role);
                 return Ok(new {Message = "Ususario activado"});
