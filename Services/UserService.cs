@@ -35,6 +35,36 @@ namespace NetflixClone.Services
             return passwordHash == computedHash;
         }
 
+        public async Task<IEnumerable<UserDto>> GetAll()
+        {
+            try  {
+                var query = _context.Users
+                    .Include(u => u.Subscription)
+                    .AsQueryable();
+
+                var clients = query.Where(u => u.Role == "client");
+
+                var users = await clients.Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    Role = u.Role,
+                    ExpirationDate = u.ExpirationDate,
+                    IsPaid = u.IsPaid,
+                    SubscriptionId = u.SubscriptionId ?? 0,
+                    Subscription = u.Subscription != null ? new SubscriptionDTO(u.Subscription) : null
+                }).ToListAsync();
+
+                return users;
+            } catch (Exception ex) {
+                Console.WriteLine($"Error al obtener usuarios: {ex.Message}");
+                return null; // Puedes devolver null o una lista vacía según tu lógica de manejo de errores
+            }
+        }
+
+
+
         public async Task<User?> GetUserByUsername(string username) {
             return await _context.Users
                             .Include(u => u.Subscription)

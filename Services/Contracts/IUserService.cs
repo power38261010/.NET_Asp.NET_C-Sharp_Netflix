@@ -7,6 +7,7 @@ namespace NetflixClone.Services.Contracts
 {
     public interface IUserService /* : IBaseService <User, UserDto>**/
     {
+        Task<IEnumerable<UserDto>?> GetAll();
         Task<UserDto?> Register(string Username, string PasswordHash, string Email, int SubscriptionId );
         Task<UserDto?> Authenticate(string Username, string PasswordHash);
         Task<User?> GetUserById(int id);

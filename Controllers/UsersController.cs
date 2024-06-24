@@ -36,6 +36,22 @@ namespace NetflixClone.Controllers {
             }
         }
 
+        [HttpGet]
+        [Authorize(Policy = "SuperAdminPolicy")]
+        public async Task<ActionResult> GetAll() {
+            try {
+
+                    var users = await _userService.GetAll();
+                    return Ok(users);
+
+            } catch (Exception ex) {
+                _logger.LogError($"Error durante el uso de _userService.GetUserById: {ex.Message}");
+
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUserById(int id) {
             try {
