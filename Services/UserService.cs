@@ -52,9 +52,11 @@ namespace NetflixClone.Services
             if (SubscriptionId == 1) {
                 user.ExpirationDate = DateTime.UtcNow.AddDays(30);
                 user.SubscriptionId = SubscriptionId;
+                user.IsPaid = true;
             } else if (SubscriptionId == 2) {
                 user.ExpirationDate = DateTime.UtcNow.AddDays(15);
                 user.SubscriptionId = SubscriptionId;
+                user.IsPaid = true;
             }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
