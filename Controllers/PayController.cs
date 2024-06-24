@@ -23,7 +23,8 @@ namespace NetflixClone.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Policy = "SuperAdminPolicy")]
+
         public async Task<IActionResult> GetAllPayments() {
             try {
                 var payments = await _payService.GetAll();
@@ -74,6 +75,7 @@ namespace NetflixClone.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
         [HttpPut("{id}")]
         [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<IActionResult> UpdatePay(int id, [FromBody]  PayRequest pay)  {

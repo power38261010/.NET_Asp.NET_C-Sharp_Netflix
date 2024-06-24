@@ -27,21 +27,10 @@ namespace NetflixClone.Services
             var sub = new Subscription {Type = subscription.Type};
             _context.Subscriptions.Add(sub);
             await _context.SaveChangesAsync();
-
-            if (subscription.MovieSubscriptionRequest != null) {
-                foreach (var movie in subscription.MovieSubscriptionRequest) {
-                    _context.MovieSubscription.Add(new MovieSubscription {
-                        MovieId = movie.MovieId,
-                        SubscriptionId = sub.Id
-                    });
-                }
-                await _context.SaveChangesAsync();
-            }
         }
 
         public async Task Edit(SubscriptionRequest subscription) {
-            var sub = await _context.Subscriptions.Include(sub => sub.MovieSubscription)
-                                .FirstOrDefaultAsync(s => s.Id == subscription.Id);
+            var sub = await _context.Subscriptions.FirstOrDefaultAsync(s => s.Id == subscription.Id);
             if (sub != null) {
                 sub.Type = subscription.Type ?? sub.Type;
                 _context.Entry(sub).State = EntityState.Modified;

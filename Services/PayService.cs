@@ -99,28 +99,39 @@ namespace NetflixClone.Services {
         }
 
         public async Task<Pay?> GetById(int id) {
-            return await _context.Payments.FindAsync(id);
+            return await _context.Payments.Include(p => p.Subscription).FirstOrDefaultAsync(pay => pay.Id == id);
         }
 
+
         public async Task Create(PayRequest pay) {
-            var payAux = new Pay {Currency = pay.Currency,
-                                    MonthlyPayment = pay.MonthlyPayment,
-                                    SubscriptionId = pay.SubscriptionId};
+            var payAux = new Pay {
+                Currency = pay.Currency,
+                MonthlyPayment = pay.MonthlyPayment,
+                SubscriptionId = pay.SubscriptionId
+            };
 
             _context.Payments.Add(payAux);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task Edit(PayRequest pay) {
             var payAux = await _context.Payments.FirstOrDefaultAsync(p => p.Id == pay.Id);
             if (payAux != null) {
                 payAux.Currency = pay.Currency ?? payAux.Currency;
                 if (pay.MonthlyPayment != 0) payAux.MonthlyPayment = pay.MonthlyPayment;
-                if (pay.SubscriptionId != 0) payAux.SubscriptionId = payAux.SubscriptionId;
+
+                if (pay.SubscriptionId != 0) {
+                    var subscriptionExists = await _context.Subscriptions.AnyAsync(s => s.Id == pay.SubscriptionId);
+                    if (subscriptionExists) {
+                        payAux.SubscriptionId = pay.SubscriptionId;
+                    } else {
+                        throw new Exception("El SubscriptionId proporcionado no existe.");
+                    }
+                }
                 _context.Entry(payAux).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-
         }
 
         public async Task Delete(int id) {
