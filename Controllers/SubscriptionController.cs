@@ -46,8 +46,8 @@ namespace NetflixClone.Controllers {
         [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<ActionResult> CreateSubscription([FromBody] SubscriptionRequest subscription) {
             try {
-                await _subscriptionService.Create(subscription);
-                return CreatedAtAction(nameof(GetSubscriptionById), new { id = subscription.Id }, subscription);
+                var sub = await _subscriptionService.Create(subscription);
+                return CreatedAtAction(nameof(GetSubscriptionById), new { id = sub.Id }, sub);
             } catch (Exception ex) {
                 _logger.LogError($"Error durante el uso de _subscriptionService.GetById: {ex.Message}");
                 return BadRequest(new { Message = ex.Message });

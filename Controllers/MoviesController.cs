@@ -114,12 +114,8 @@ namespace NetflixClone.Controllers
                 _logger.LogWarning($"movieSubscriptions warning: {movieSubscriptions}");
                 }
 
-                var success = await _movieService.CreateMovie(request.Title, request.Description, request.Genre, request.ReleaseDate, request.PosterUrl, request.TrailerUrl, (float?)request.Rating,movieSubscriptions);
-                if (success)
-                {
-                    return CreatedAtAction(nameof(GetMovieById), new { id = request.Id }, request);
-                }
-                return BadRequest(new { Message = "Unable to create movie" });
+                var movie = await _movieService.CreateMovie(request.Title, request.Description, request.Genre, request.ReleaseDate, request.PosterUrl, request.TrailerUrl, (float?)request.Rating,movieSubscriptions);
+                return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
             }
             catch (Exception ex)
             {

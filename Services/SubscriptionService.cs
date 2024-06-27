@@ -23,10 +23,11 @@ namespace NetflixClone.Services
             return await _context.Subscriptions.FindAsync(id);
         }
 
-        public async Task Create(SubscriptionRequest subscription) {
+        public async Task<Subscription> Create(SubscriptionRequest subscription) {
             var sub = new Subscription {Type = subscription.Type};
             _context.Subscriptions.Add(sub);
             await _context.SaveChangesAsync();
+            return sub;
         }
 
         public async Task Edit(SubscriptionRequest subscription) {

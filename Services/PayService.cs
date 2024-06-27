@@ -103,7 +103,7 @@ namespace NetflixClone.Services {
         }
 
 
-        public async Task Create(PayRequest pay) {
+        public async Task<Pay> Create(PayRequest pay) {
             var payAux = new Pay {
                 Currency = pay.Currency,
                 MonthlyPayment = pay.MonthlyPayment,
@@ -112,6 +112,7 @@ namespace NetflixClone.Services {
 
             _context.Payments.Add(payAux);
             await _context.SaveChangesAsync();
+            return payAux;
         }
 
 

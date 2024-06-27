@@ -53,8 +53,8 @@ namespace NetflixClone.Controllers
         [Authorize(Policy = "SuperAdminPolicy")]
         public async Task<IActionResult> CreatePay([FromBody] PayRequest pay) {
             try {
-                await _payService.Create(pay);
-                return CreatedAtAction(nameof(GetPayById), new { id = pay.Id }, pay);
+                var payAux = await _payService.Create(pay);
+                return CreatedAtAction(nameof(GetPayById), new { id = payAux.Id }, payAux);
             } catch (Exception ex) {
                 _logger.LogError($"Error durante el uso de _payService.GetById: {ex.Message}");
                 return BadRequest(new { Message = ex.Message });

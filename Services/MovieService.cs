@@ -34,7 +34,7 @@ namespace NetflixClone.Services {
             }
         }
 
-    public async Task<bool> CreateMovie(string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription = null) {
+    public async Task<Movie> CreateMovie(string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription = null) {
         try {
 
             var movie = new Movie {
@@ -60,9 +60,9 @@ namespace NetflixClone.Services {
                 await _context.SaveChangesAsync();
             }
 
-            return true;
-        } catch {
-            return false;
+            return movie;
+        } catch (Exception ex){
+            throw ex;
         }
     }
 

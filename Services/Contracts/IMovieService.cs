@@ -11,7 +11,7 @@ namespace NetflixClone.Services.Contracts
     {
         Task<IEnumerable<Movie>> GetAllMovies();
         Task<Movie?> GetMovieById(int id);
-        Task<bool> CreateMovie(string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription);
+        Task<Movie> CreateMovie(string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription);
         Task<bool> UpdateMovie(int Id, string? Title, string? Description, string? Genre, DateTime? ReleaseDate, string? PosterUrl, string? TrailerUrl, float? Rating, ICollection<MovieSubscription>? MovieSubscription);
         Task<bool> LikeMovie(int id);
         Task<bool> DislikeMovie(int id);

@@ -318,8 +318,6 @@
 /home/alejandro/Escritorio/asp-net-react/api-asp.net/obj/Debug/net8.0/ref/NetflixClone.dll
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/appsettings.Development.json
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/appsettings.json
-/home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/package-lock.json
-/home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/package.json
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/NetflixClone.staticwebassets.runtime.json
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/NetflixClone
 /home/alejandro/Escritorio/netflix-asp-react/api-asp.net/bin/Debug/net8.0/NetflixClone.deps.json
