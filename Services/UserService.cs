@@ -124,8 +124,14 @@ namespace NetflixClone.Services
 
             var user = await GetUserById (Id);
             if (PasswordHashNew != "")  user.PasswordHash = GenerateHash(PasswordHashNew);
-            if (Username != null && Username != "") user.Username = Username;
-            if (Email != null && Email != "") user.Email = Email;
+            if (Username != null && Username != "") {
+                if (await _context.Users.AnyAsync(u => u.Username == Username)) throw new Exception("Username ya existente, intenta con otro!");
+                else user.Username = Username;
+            }
+            if (Email != null && Email != "") {
+                if ( await _context.Users.AnyAsync(u =>  u.Email == Email )) throw new Exception("Email ya existente, intenta con otro!");
+                else user.Email = Email;
+            }
 
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
