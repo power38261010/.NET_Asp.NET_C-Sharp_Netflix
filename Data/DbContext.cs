@@ -29,7 +29,21 @@ namespace NetflixClone.Data {
             modelBuilder.Entity<MovieSubscription>()
                 .HasOne(ms => ms.Subscription)
                 .WithMany(s => s.MovieSubscription)
-                .HasForeignKey(ms => ms.SubscriptionId);
+                .HasForeignKey(ms => ms.SubscriptionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Pay>()
+                .HasOne(p => p.Subscription)
+                .WithMany()
+                .HasForeignKey(p => p.SubscriptionId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Subscription)
+                .WithMany()
+                .HasForeignKey(u => u.SubscriptionId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
+
     }
 }

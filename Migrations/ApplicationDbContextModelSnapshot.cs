@@ -229,7 +229,8 @@ namespace NetflixClone.Migrations
                 {
                     b.HasOne("NetflixClone.Models.Subscription", "Subscription")
                         .WithMany()
-                        .HasForeignKey("SubscriptionId");
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Subscription");
                 });
@@ -257,7 +258,8 @@ namespace NetflixClone.Migrations
                 {
                     b.HasOne("NetflixClone.Models.Subscription", "Subscription")
                         .WithMany()
-                        .HasForeignKey("SubscriptionId");
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Subscription");
                 });

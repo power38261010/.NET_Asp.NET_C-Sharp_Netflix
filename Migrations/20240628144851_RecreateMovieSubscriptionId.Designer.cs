@@ -12,7 +12,7 @@ using NetflixClone.Data;
 namespace NetflixClone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240622190602_RecreateMovieSubscriptionId")]
+    [Migration("20240628144851_RecreateMovieSubscriptionId")]
     partial class RecreateMovieSubscriptionId
     {
         /// <inheritdoc />
@@ -232,7 +232,8 @@ namespace NetflixClone.Migrations
                 {
                     b.HasOne("NetflixClone.Models.Subscription", "Subscription")
                         .WithMany()
-                        .HasForeignKey("SubscriptionId");
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Subscription");
                 });
@@ -260,7 +261,8 @@ namespace NetflixClone.Migrations
                 {
                     b.HasOne("NetflixClone.Models.Subscription", "Subscription")
                         .WithMany()
-                        .HasForeignKey("SubscriptionId");
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Subscription");
                 });
