@@ -74,9 +74,9 @@ namespace NetflixClone.Services
         public async Task<UserDto?> Register(string Username, string PasswordHash, string Email, int SubscriptionId = 0) {
 
             if (await _context.Users.AnyAsync(u => u.Username == Username)) {
-                throw new Exception("Username already exists");
+                throw new Exception("Username ya existente, intenta con otro!");
             } else if (await _context.Users.AnyAsync(u =>  u.Email == Email)) {
-                throw new Exception("Email already exists");
+                throw new Exception("Email ya existente, intenta con otro!");
             }
             var user = new User { Username = Username, PasswordHash= GenerateHash(PasswordHash), Email = Email, Role = "client" };
             if (SubscriptionId == 1) {
