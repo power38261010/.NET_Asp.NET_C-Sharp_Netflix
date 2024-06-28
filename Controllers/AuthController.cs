@@ -34,7 +34,7 @@ namespace NetflixClone.Controllers
             try {
                 var user = await _userService.Authenticate(credentials.Username, credentials.PasswordHash);
                 if (user == null || user.Role == null ) {
-                    return BadRequest(new { Message = "Usuario y/o Contraseña Incorrecto/S" });
+                    return BadRequest(new { Message = "Usuario y/o Contraseña Incorrecto/s" });
                 }
 
                 var token = _authService.GenerateJwtToken(user.Username, user.Role);
