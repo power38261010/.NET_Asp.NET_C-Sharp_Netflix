@@ -12,8 +12,8 @@ using NetflixClone.Data;
 namespace NetflixClone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240612015639_InitialCreateV2")]
-    partial class InitialCreateV2
+    [Migration("20240711202354_MigrateDB")]
+    partial class MigrateDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,16 +61,21 @@ namespace NetflixClone.Migrations
 
             modelBuilder.Entity("NetflixClone.Models.MovieSubscription", b =>
                 {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
+
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
                     b.Property<int>("SubscriptionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.HasKey("MovieId", "SubscriptionId");
+                    b.HasIndex("MovieId");
 
                     b.HasIndex("SubscriptionId");
 
@@ -227,7 +232,8 @@ namespace NetflixClone.Migrations
                 {
                     b.HasOne("NetflixClone.Models.Subscription", "Subscription")
                         .WithMany()
-                        .HasForeignKey("SubscriptionId");
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Subscription");
                 });
@@ -255,7 +261,8 @@ namespace NetflixClone.Migrations
                 {
                     b.HasOne("NetflixClone.Models.Subscription", "Subscription")
                         .WithMany()
-                        .HasForeignKey("SubscriptionId");
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Subscription");
                 });
