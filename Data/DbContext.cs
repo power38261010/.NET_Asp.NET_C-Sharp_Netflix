@@ -12,7 +12,7 @@ namespace NetflixClone.Data {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=tcp:netdlix-clon-server.database.windows.net,1433;Initial Catalog=netflix-arrua-mssql;Persist Security Info=False;User ID=alearrua;Password=Camilo.94;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=60;");
+            optionsBuilder.UseSqlServer("Server=localhost;Database=NetflixClon;User Id=SA;Password=Camilo.1994;Encrypt=false;TrustServerCertificate=True;");
         }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
         }
